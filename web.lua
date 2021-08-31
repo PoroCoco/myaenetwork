@@ -129,6 +129,16 @@ function processPing(string)
     tab = {code,itemRequested,numberRequested}
     return tab
 end
+
+function getStringCpus()
+    local string = ""
+    for k,v in pairs(me.getCpus()) do
+        if type(v) == 'table' then
+            string = string .. v['name'] .. "~" .. tostring(v["storage"]) .. "~".. tostring(v["coprocessors"]).."~".. tostring(v["busy"])..";"
+        end
+    end
+    return string
+end
 --for k,v in pairs(table) do print(k,v) end
 --print(table)
 
@@ -154,7 +164,7 @@ if filesystem.exists(webIdPath) then
             if needUpdate == "True" then
                 followedPing = 0
                 print("Server is requesting data")
-                if internet.request(urlSendItemData, getItemDataString()..";"..tostring(computer_id))() == "OK" then
+                if internet.request(urlSendItemData, getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id))() == "OK" then
                     print("Data sent")
                 else
                     print("Couldn't send data")
