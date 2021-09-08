@@ -3,6 +3,7 @@ local internet = require("internet")
 local filesystem = require("filesystem")
 local shell = require("shell")
 
+local urlAccount = "http://193.250.73.200/accountCreation"
 local webIdPath = "/home/myaenetwork/webIdentification.txt"
 local workDirectory = "/home/myaenetwork/"
 local newDirectory = "/home/myaenetwork"
@@ -57,7 +58,6 @@ function createAccount()
 end
 
 function accountToServer(id, username, password)
-    local urlAccount = "http://localhost:5000/accountCreation"
     local accountData = tostring(id)..";"..username..";"..password
     shell.setWorkingDirectory("/home/") -- if the server is down, internet.request will give an error so before trying it's going back to the basic dir 
     if internet.request(urlAccount, accountData)() == "Account accepted" then

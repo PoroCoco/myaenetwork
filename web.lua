@@ -10,9 +10,9 @@ local working = true
 local webIdPath = "home/myaenetwork/webIdentification.txt"
 local workingDirectory = "home/myaenetwork/"
 
-local urlSendItemData = "http://localhost:5000/inputItemData"
-local pingUrl = "http://localhost:5000/toPing"
-local urlSendCraftingStatus = "http://localhost:5000/inputCraftingStatus"
+local urlSendItemData = "http://193.250.73.200/inputItemData"
+local pingUrl = "http://193.250.73.200/toPing"
+local urlSendCraftingStatus = "http://193.250.73.200/inputCraftingStatus"
 
 local issuedCraftingRequest = {}
 local maxPing = 1000
