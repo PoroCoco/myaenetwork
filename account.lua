@@ -3,7 +3,7 @@ local internet = require("internet")
 local filesystem = require("filesystem")
 local shell = require("shell")
 
-local urlAccount = "http://193.250.73.200/accountCreation"
+local urlAccount = "http://127.0.0.1:5000/accountCreation"
 local webIdPath = "/home/myaenetwork/webIdentification.txt"
 local workDirectory = "/home/myaenetwork/"
 local newDirectory = "/home/myaenetwork"

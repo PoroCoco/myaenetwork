@@ -6,18 +6,19 @@ local shell = require("shell")
 
 local me = component.me_controller
 
+local version = "0.10"
 local working = true
 local webIdPath = "home/myaenetwork/webIdentification.txt"
 local workingDirectory = "home/myaenetwork/"
 
-local urlSendItemData = "http://193.250.73.200/inputItemData"
-local pingUrl = "http://193.250.73.200/toPing"
-local urlSendCraftingStatus = "http://193.250.73.200/inputCraftingStatus"
+local urlSendItemData = "http://127.0.0.1:5000/inputItemData"
+local pingUrl = "http://127.0.0.1:5000/toPing"
+local urlSendCraftingStatus = "http://127.0.0.1:5000/inputCraftingStatus"
 
 local issuedCraftingRequest = {}
 local maxPing = 1000
 local followedPing = 0
-
+local serverTimeoutReconnect = 300
 
 function isConfigCorrect(rid, rusername,rpassword)
     if rid == nil or rusername == nil or rpassword == nil then
@@ -139,8 +140,21 @@ function getStringCpus()
     end
     return string
 end
---for k,v in pairs(table) do print(k,v) end
---print(table)
+
+function webRequest(url,string)
+    local isServerOnline, result = pcall(internet.request(url,string))
+    if not isServerOnline then
+        print("Couldn't connect. The Web server is likely offline. Retrying connection in "..serverTimeoutReconnect.." seconds.")
+        os.sleep(serverTimeoutReconnect)
+        return false
+    else
+        return result
+    end
+end
+
+function updateProgram()
+    os.execute("MaenUpdater")
+end
 
 if filesystem.exists(webIdPath) then
     shell.setWorkingDirectory(workingDirectory)
@@ -155,19 +169,26 @@ if filesystem.exists(webIdPath) then
     if isConfigCorrect(rid,rusername,rpassword) then
         print("Started")
         while working do
+            ::restart::
             followedPing = followedPing + 1 
-            local pingResult = internet.request(pingUrl,tostring(computer_id))()
+            local pingResult = webRequest(pingUrl,version..";"..tostring(computer_id))
+            if not pingResult then goto restart end
             pingResult = processPing(pingResult)
             local needUpdate = pingResult[1]
             local itemRequested = pingResult[2]
             local numberRequested = pingResult[3]
+
+            if needUpdate == "Outdated" then
+                updateProgram()
+            end
+
             if needUpdate == "True" then
                 followedPing = 0
                 print("Server is requesting data")
-                if internet.request(urlSendItemData, getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id))() == "OK" then
+                dataResult = webRequest(urlSendItemData,getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id) )
+                if not pingResult then goto restart end
+                if dataResult == "OK" then
                     print("Data sent")
-                else
-                    print("Couldn't send data")
                 end
                 if itemRequested ~= "EMPTY" then
                     local subTable ={}
@@ -179,16 +200,19 @@ if filesystem.exists(webIdPath) then
                         break
                     end
                     issuedCraftingRequest[#issuedCraftingRequest+1] = subTable
-                    if internet.request(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))() == "OK" then
+                    webCraftingResult = webRequest(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))
+                    if not webCraftingResult then goto restart end
+                    if webCraftingResult == "OK" then
                         print(subTable[1],subTable[2])
                         print("Crafting status sent")
                     else
                         print("Couldn't send crafting status")
                     end
-                elseif internet.request(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))() == "OK" then
-
+                else 
+                    webCraftingResult = webRequest(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))
+                    if not webCraftingResult then goto restart end
+                    -- print("Crafing status updated")
                 end
-                print("Crafing status updated")
             end
             if #issuedCraftingRequest > 30 then
                 table.remove(issuedCraftingRequest,1)
