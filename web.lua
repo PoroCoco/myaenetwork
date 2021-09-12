@@ -6,7 +6,7 @@ local shell = require("shell")
 
 local me = component.me_controller
 
-local version = "0.10"
+local version = "0.11"
 local working = true
 local webIdPath = "home/myaenetwork/webIdentification.txt"
 local workingDirectory = "home/myaenetwork/"
@@ -153,7 +153,15 @@ function webRequest(url,string)
 end
 
 function updateProgram()
-    os.execute("MaenUpdater")
+    print("You are using an outdated version !")
+    print("Do you want to update ? Yes/No")
+    local acceptedUpdate = io.read()
+    if acceptedUpdate == "Yes" or acceptedUpdate == "yes" then
+        os.execute("MaenUpdater")
+    else
+        print("You didn't accept the update. You cannot use the program with an outdated version")
+        os.sleep(5)
+        computer.shutdown(true)
 end
 
 if filesystem.exists(webIdPath) then
