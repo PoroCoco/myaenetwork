@@ -162,6 +162,7 @@ function updateProgram()
         print("You didn't accept the update. You cannot use the program with an outdated version")
         os.sleep(5)
         computer.shutdown(true)
+	end
 end
 
 if filesystem.exists(webIdPath) then
