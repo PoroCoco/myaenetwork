@@ -33,12 +33,22 @@ end
 
 function getItemDataString()
     local string = ""
-    for k,v in pairs(me.getItemsInNetwork()) do
-        if type(v) == 'table' then
-            string = string .. v['label'] .. "~" .. v["size"] .. "~".. tostring(v["isCraftable"])..";"
+    local isModpackGTNH, storedItems = pcall(me.allItems) --tries the allItems method only available on the GTNH modpack. 
+    if isModpackGTNH then
+        for item in storedItems do
+            if type(item) == 'table' then
+                string = string .. item['label'] .. "~" .. item["size"] .. "~".. tostring(item["isCraftable"])..";"
+            end
         end
+        return string
+    else
+        for k,v in pairs(me.getItemsInNetwork()) do
+            if type(v) == 'table' then
+                string = string .. v['label'] .. "~" .. v["size"] .. "~".. tostring(v["isCraftable"])..";"
+            end
+        end
+        return string
     end
-    return string
 end
 
 function requestItem(name, number)
