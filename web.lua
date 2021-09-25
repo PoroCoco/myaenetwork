@@ -184,7 +184,7 @@ function updateProgram()
     print("Do you want to update ? Yes/No")
     local acceptedUpdate = io.read()
     if acceptedUpdate == "Yes" or acceptedUpdate == "yes" then
-        os.execute("MaenUpdater")
+        os.execute("myaenetwork/MaenUpdater.lua")
     else
         print("You didn't accept the update. You cannot use the program with an outdated version")
         os.sleep(5)
