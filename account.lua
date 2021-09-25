@@ -8,6 +8,23 @@ local webIdPath = "/home/myaenetwork/webIdentification.txt"
 local workDirectory = "/home/myaenetwork/"
 local newDirectory = "/home/myaenetwork"
 
+--Taken from StackOverflow : https://stackoverflow.com/questions/34618946/lua-base64-encode
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
+-- encoding
+    function encodeBase64(data)
+        return ((data:gsub('.', function(x) 
+            local r,b='',x:byte()
+            for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+            return r;
+        end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+            if (#x < 6) then return '' end
+            local c=0
+            for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+            return b:sub(c+1,c+1)
+        end)..({ '', '==', '=' })[#data%3+1])
+    end
+--
+
 function isConfigCorrect(rid, rusername,rpassword) --checks if each line of the identification file as the right data 
     if rid == nil or rusername == nil or rpassword == nil then
         return false
@@ -60,7 +77,7 @@ end
 function accountToServer(id, username, password)
     local accountData = tostring(id)..";"..username..";"..password
     shell.setWorkingDirectory("/home/") -- if the server is down, internet.request will give an error so before trying it's going back to the basic dir 
-    if internet.request(urlAccount, accountData)() == "Account accepted" then
+    if internet.request(urlAccount, encodeBase64(accountData))() == "Account accepted" then
         shell.setWorkingDirectory(workDirectory)
         return true
     else 

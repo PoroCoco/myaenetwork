@@ -6,7 +6,7 @@ local shell = require("shell")
 
 local me = component.me_controller
 
-local version = "0.11"
+local version = "0.12"
 local working = true
 local webIdPath = "home/myaenetwork/webIdentification.txt"
 local workingDirectory = "home/myaenetwork/"
@@ -19,6 +19,23 @@ local issuedCraftingRequest = {}
 local maxPing = 1000
 local followedPing = 0
 local serverTimeoutReconnect = 300
+
+--Taken from StackOverflow : https://stackoverflow.com/questions/34618946/lua-base64-encode
+    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
+    -- encoding
+    function encodeBase64(data)
+        return ((data:gsub('.', function(x) 
+            local r,b='',x:byte()
+            for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+            return r;
+        end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+            if (#x < 6) then return '' end
+            local c=0
+            for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+            return b:sub(c+1,c+1)
+        end)..({ '', '==', '=' })[#data%3+1])
+    end
+--
 
 function isConfigCorrect(rid, rusername,rpassword)
     if rid == nil or rusername == nil or rpassword == nil then
@@ -204,7 +221,7 @@ if filesystem.exists(webIdPath) then
             if needUpdate == "True" then
                 followedPing = 0
                 print("Server is requesting data")
-                dataResult = webRequest(urlSendItemData,getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id) )
+                dataResult = webRequest(urlSendItemData,encodeBase64(getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id)))
                 if not pingResult then goto restart end
                 if dataResult == "OK" then
                     print("Data sent")
@@ -219,7 +236,7 @@ if filesystem.exists(webIdPath) then
                         break
                     end
                     issuedCraftingRequest[#issuedCraftingRequest+1] = subTable
-                    webCraftingResult = webRequest(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))
+                    webCraftingResult = webRequest(urlSendCraftingStatus, encodeBase64(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
                     if not webCraftingResult then goto restart end
                     if webCraftingResult == "OK" then
                         print(subTable[1],subTable[2])
@@ -228,7 +245,7 @@ if filesystem.exists(webIdPath) then
                         print("Couldn't send crafting status")
                     end
                 else 
-                    webCraftingResult = webRequest(urlSendCraftingStatus, craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id))
+                    webCraftingResult = webRequest(urlSendCraftingStatus, encodeBase64(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
                     if not webCraftingResult then goto restart end
                     -- print("Crafing status updated")
                 end
