@@ -4,7 +4,15 @@ local internet = require("internet")
 local filesystem = require("filesystem")
 local shell = require("shell")
 
-local me = component.me_controller
+
+if component.isAvailable("me_controller") then
+    local me = component.me_controller
+elseif component.isAvailable("me_interface") then
+    local me = component.me_interface
+else
+    print("You need to connect the adapter to either a me controller or a me interface")
+    os.exit()
+end
 
 local version = "0.12"
 local working = true
