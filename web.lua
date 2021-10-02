@@ -65,7 +65,6 @@ function getItemDataString()
             if type(item) == 'table' then
                 string = string .. item['label'] .. "~" .. item["size"] .. "~".. tostring(item["isCraftable"])..";"
             end
-            os.sleep(0)
         end
         return string
     else
@@ -73,7 +72,6 @@ function getItemDataString()
             if type(v) == 'table' then
                 string = string .. v['label'] .. "~" .. v["size"] .. "~".. tostring(v["isCraftable"])..";"
             end
-            os.sleep(0)
         end
         return string
     end
