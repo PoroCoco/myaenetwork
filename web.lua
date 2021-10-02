@@ -65,6 +65,7 @@ function getItemDataString()
             if type(item) == 'table' then
                 string = string .. item['label'] .. "~" .. item["size"] .. "~".. tostring(item["isCraftable"])..";"
             end
+            os.sleep(0)
         end
         return string
     else
@@ -207,7 +208,10 @@ if filesystem.exists(webIdPath) then
     local rid = f:read('*l')
     local rusername = f:read('*l')
     local rpassword = f:read('*l')
-    local computer_id = string.sub(rid,6) 
+    local computer_id
+    if rid ~= nil then
+        computer_id = string.sub(rid,6) 
+    end
     f:close()
     shell.setWorkingDirectory("/home/")
 
