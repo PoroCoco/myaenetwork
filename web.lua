@@ -15,7 +15,7 @@ else
     os.exit()
 end
 
-local version = "0.12"
+local version = "0.13"
 local working = true
 local webIdPath = "home/myaenetwork/webIdentification.txt"
 local workingDirectory = "home/myaenetwork/"
