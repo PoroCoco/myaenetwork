@@ -29,22 +29,22 @@ local maxPing = 1000
 local followedPing = 0
 local serverTimeoutReconnect = 300
 
---Taken from StackOverflow : https://stackoverflow.com/questions/34618946/lua-base64-encode
-    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' -- You will need this for encoding/decoding
-    -- encoding
-    function encodeBase64(data)
-        return ((data:gsub('.', function(x) 
-            local r,b='',x:byte()
-            for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-            return r;
-        end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-            if (#x < 6) then return '' end
-            local c=0
-            for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-            return b:sub(c+1,c+1)
-        end)..({ '', '==', '=' })[#data%3+1])
-    end
---
+local bs = { [0] =
+   'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+   'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f',
+   'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
+   'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/',
+}
+
+function encode(s)
+   local byte, rep = string.byte, string.rep
+   local pad = 2 - ((#s-1) % 3)
+   s = (s..rep('\0', pad)):gsub("...", function(cs)
+      local a, b, c = byte(cs, 1, 3)
+      return bs[a>>2] .. bs[(a&3)<<4|b>>4] .. bs[(b&15)<<2|c>>6] .. bs[c&63]
+   end)
+   return s:sub(1, #s-pad) .. rep('=', pad)
+end
 
 function isConfigCorrect(rid, rusername,rpassword)
     if rid == nil or rusername == nil or rpassword == nil then
@@ -233,7 +233,7 @@ if filesystem.exists(webIdPath) then
             if needUpdate == "True" then
                 followedPing = 0
                 print("Server is requesting data")
-                dataResult = webRequest(urlSendItemData,encodeBase64(getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id)))
+                dataResult = webRequest(urlSendItemData,encode(getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id)))
                 if not pingResult then goto restart end
                 if dataResult == "OK" then
                     print("Data sent")
@@ -248,7 +248,7 @@ if filesystem.exists(webIdPath) then
                         break
                     end
                     issuedCraftingRequest[#issuedCraftingRequest+1] = subTable
-                    webCraftingResult = webRequest(urlSendCraftingStatus, encodeBase64(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
+                    webCraftingResult = webRequest(urlSendCraftingStatus, encode(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
                     if not webCraftingResult then goto restart end
                     if webCraftingResult == "OK" then
                         print(subTable[1],subTable[2])
@@ -257,7 +257,7 @@ if filesystem.exists(webIdPath) then
                         print("Couldn't send crafting status")
                     end
                 else 
-                    webCraftingResult = webRequest(urlSendCraftingStatus, encodeBase64(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
+                    webCraftingResult = webRequest(urlSendCraftingStatus, encode(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
                     if not webCraftingResult then goto restart end
                     -- print("Crafing status updated")
                 end
