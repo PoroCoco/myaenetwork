@@ -11,6 +11,7 @@ shell.execute("wget https://raw.githubusercontent.com/PoroCoco/myaenetwork/main/
 shell.execute("wget https://raw.githubusercontent.com/PoroCoco/myaenetwork/main/web.lua")
 shell.execute("wget https://raw.githubusercontent.com/PoroCoco/myaenetwork/main/accountAux.lua")
 shell.execute("wget https://raw.githubusercontent.com/PoroCoco/myaenetwork/main/webAux.lua")
+shell.execute("wget https://raw.githubusercontent.com/PoroCoco/myaenetwork/main/MaenUpdater.lua")
 shell.setWorkingDirectory("/home/")
 print("Rebooting")
 computer.shutdown(true)
