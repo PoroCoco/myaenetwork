@@ -245,8 +245,7 @@ if filesystem.exists(webIdPath) then
             if needUpdate == "True" then
                 followedPing = 0
                 print("Server is requesting data")
-                dataResult = webRequest(urlSendItemData,pcall(encode(getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id))))
-                if not pingResult then goto restart end
+                dataResult = webRequest(urlSendItemData,encode(getItemDataString().."|"..tostring(me.getAvgPowerUsage())..";"..tostring(me.getMaxStoredPower())..";"..tostring(me.getStoredPower()).."|"..getStringCpus()..";"..tostring(computer_id)))                if not pingResult then goto restart end
                 if dataResult == "OK" then
                     print("Data sent")
                 end
