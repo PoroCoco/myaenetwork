@@ -256,7 +256,7 @@ if filesystem.exists(webIdPath) then
                     subTable[3] = requestItem(itemRequested,tonumber(numberRequested))
                     if subTable[3] == 'existe pas' then
                         print("requested item doesn't exist in the craftables")
-                        break
+                        goto restart
                     end
                     issuedCraftingRequest[#issuedCraftingRequest+1] = subTable
                     webCraftingResult = webRequest(urlSendCraftingStatus, encode(craftingStatusDataToString(issuedCraftingRequest)..";"..tostring(computer_id)))
