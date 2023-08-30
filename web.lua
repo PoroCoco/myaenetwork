@@ -147,7 +147,6 @@ if socket then
     socket.write(poroNet.packet_id(id, current_version))
     local _,_,_ = event.pull("internet_ready")
     local accepted = socket.read(1)
-    print("accept :",accepted)
     if (accepted == "1") then
         updateProgram()
         exit()
