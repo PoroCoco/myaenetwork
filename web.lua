@@ -5,8 +5,8 @@ local poroNet = require("poroNet")
 local internet = component.internet
 
 
-local server_ip = "xxx.xx.xx.xxx"
-local server_port = 0000
+local server_ip = "myaenetwork.ovh"
+local server_port = 9876
 
 local current_version = "0.1"
 local crafting_request_backlog_size = 30

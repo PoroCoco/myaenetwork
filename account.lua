@@ -6,7 +6,7 @@ package.loaded.poroNet = nil
 local poroNet = require("poroNet")
 
 
-local server_ip = "192.168.1.39"
+local server_ip = "myaenetwork.ovh"
 local server_port = 9876
 local webIdPath = "/home/myaenetwork/webIdentification.txt"
 local workDirectory = "/home/myaenetwork/"
