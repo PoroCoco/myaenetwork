@@ -1,7 +1,7 @@
 local component = require("component")
 local event = require("event")
 package.loaded.poroNet = nil
-local poroNet = require("poroNet")
+local poroNet = require("myaenetwork/poroNet")
 local internet = component.internet
 
 

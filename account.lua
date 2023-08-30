@@ -3,7 +3,7 @@ local internet = component.internet
 local filesystem = require("filesystem")
 local shell = require("shell")
 package.loaded.poroNet = nil
-local poroNet = require("poroNet")
+local poroNet = require("myaenetwork/poroNet")
 
 
 local server_ip = "myaenetwork.ovh"
