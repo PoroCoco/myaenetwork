@@ -179,7 +179,7 @@ if socket then
                 print("Unknown flag for the update packet. flag = ", packet_flags)
             end
             if (data ~= nil) then
-                socket.write(poroNet.create_header(poroNet.packet_types.update, #data, packet_flags)..data)
+                poroNet.sendall(socket, poroNet.create_header(poroNet.packet_types.update, #data, packet_flags)..data)
             end
         elseif (packet_type == poroNet.packet_types.craft) then
             print("Server requested a craft")

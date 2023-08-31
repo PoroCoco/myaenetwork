@@ -80,4 +80,16 @@ function M.print_byte_array(byteArray)
     io.write("\n") -- Print a newline at the end
 end
 
+function M.sendall(socket, data)
+    local remaining = #data
+    local MTU = 2048
+    local current_packet = 0
+    while remaining > 0 do
+        local sub_packet = string.sub(data, (current_packet*MTU) + 1, ((current_packet+1)*MTU) +1)
+        socket.write(sub_packet)
+        remaining = remaining - MTU
+        current_packet = current_packet + 1
+    end
+end
+
 return M
