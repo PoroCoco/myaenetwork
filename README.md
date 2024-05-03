@@ -1,8 +1,10 @@
-# myaenetwork
+# Myaenetwork
 Minecraft opencomputer LUA code to manage Applied energistic network from the web at [myaenetwork](http://myaenetwork.ovh/).
 
+# Tutorial
 
-
+A Youtube tutorial explaining every steps, from computer building to program installation and usage, is available.
+[![TUTORIAL](https://img.youtube.com/vi/8bf96PAaAZw/0.jpg)](https://www.youtube.com/watch?v=8bf96PAaAZw)
 
 # Common issues
 
